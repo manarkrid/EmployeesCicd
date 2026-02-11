@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_USER = 'your-docker-hub-username'
+        DOCKER_HUB_USER = 'manar2'
         DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
-        BACKEND_IMAGE = "${DOCKER_HUB_USER}/employees-backend"
-        FRONTEND_IMAGE = "${DOCKER_HUB_USER}/employees-frontend"
+        BACKEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_back"
+        FRONTEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_front"
     }
 
     stages {
@@ -43,10 +43,9 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Assuming kubectl is configured on the Jenkins agent
                     // Update the image in the deployment manifests or use helm
-                    sh "sed -i 's|IMAGE_BACKEND|${BACKEND_IMAGE}:${BUILD_NUMBER}|g' k8s/backend-deployment.yaml"
-                    sh "sed -i 's|IMAGE_FRONTEND|${FRONTEND_IMAGE}:${BUILD_NUMBER}|g' k8s/frontend-deployment.yaml"
+                    sh "sed -i 's|IMAGE_BACKEND|${BACKEND_IMAGE}:${BUILD_NUMBER}|g' k8s/backend-manifests.yaml"
+                    sh "sed -i 's|IMAGE_FRONTEND|${FRONTEND_IMAGE}:${BUILD_NUMBER}|g' k8s/frontend-manifests.yaml"
                     sh "kubectl apply -f k8s/"
                 }
             }
