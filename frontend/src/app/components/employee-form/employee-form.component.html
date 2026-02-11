@@ -1,0 +1,49 @@
+<mat-card class="form-card">
+  <mat-card-header>
+    <mat-card-title>{{ isEdit ? 'Modifier' : 'Ajouter' }} un employé</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form (ngSubmit)="saveEmployee()">
+      <div class="form-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Prénom</mat-label>
+          <input matInput [(ngModel)]="employee.firstName" name="firstName" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nom</mat-label>
+          <input matInput [(ngModel)]="employee.lastName" name="lastName" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="employee.email" name="email" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Poste</mat-label>
+          <input matInput [(ngModel)]="employee.position" name="position" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Genre</mat-label>
+          <mat-select [(ngModel)]="employee.gender" name="gender">
+            <mat-option value="Homme">Homme</mat-option>
+            <mat-option value="Femme">Femme</mat-option>
+            <mat-option value="Autre">Autre</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Image Upload Removed -->
+      </div>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" type="submit"
+          [disabled]="!employee.firstName || !employee.lastName || !employee.email || !employee.position">
+          {{ isEdit ? 'Mettre à jour' : 'Ajouter' }}
+        </button>
+        <button mat-button type="button" routerLink="/employees" style="margin-left: 10px;">Annuler</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

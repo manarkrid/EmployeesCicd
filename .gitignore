@@ -1,0 +1,38 @@
+# Dans Git Bash ou PowerShell
+echo "node_modules/" > .gitignore
+echo "dist/" >> .gitignore
+echo ".angular/" >> .gitignore
+echo ".env" >> .gitignore
+echo "*.log" >> .gitignore
+```
+
+Ou crée manuellement `.gitignore` avec ce contenu :
+```
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Build
+dist/
+frontend/dist/
+backend/dist/
+.angular/
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

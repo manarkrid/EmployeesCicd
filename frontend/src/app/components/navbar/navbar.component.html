@@ -1,0 +1,21 @@
+<mat-toolbar color="primary" class="navbar-toolbar">
+    <span routerLink="/home" class="navbar-title" style="cursor: pointer;">Employee Management</span>
+    
+    <span class="spacer"></span>
+    
+    <div class="search-compact">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input 
+            type="text" 
+            class="search-input-compact" 
+            placeholder="Rechercher un employé..." 
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+        <button 
+            *ngIf="searchTerm" 
+            class="clear-btn-compact" 
+            (click)="searchTerm=''; onSearch()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+</mat-toolbar>

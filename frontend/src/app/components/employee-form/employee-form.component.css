@@ -1,0 +1,15 @@
+.form-card {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.actions {
+    margin-top: 20px;
+}

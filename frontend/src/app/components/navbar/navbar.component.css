@@ -1,0 +1,193 @@
+.search-bar {
+    display: flex;
+    align-items: center;
+    margin-left: 24px;
+    width: 320px;
+    transition: all 0.3s ease;
+}
+
+.navbar-search-field {
+    width: 100%;
+}
+
+/* Base style for the search wrapper */
+.navbar-search-field ::ng-deep .mat-mdc-text-field-wrapper {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    padding: 0 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Hover effect */
+.navbar-search-field:hover ::ng-deep .mat-mdc-text-field-wrapper {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Focus effect - make it more vibrant instead of black */
+.navbar-search-field.mat-focused ::ng-deep .mat-mdc-text-field-wrapper {
+    background: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Remove default underlines and borders */
+.navbar-search-field ::ng-deep .mdc-notched-outline__leading,
+.navbar-search-field ::ng-deep .mdc-notched-outline__notch,
+.navbar-search-field ::ng-deep .mdc-notched-outline__trailing {
+    border: none !important;
+}
+
+/* Text and placeholder colors */
+.navbar-search-field ::ng-deep input {
+    color: #292323 !important;
+    font-size: 0.95rem !important;
+    caret-color: #1f1a1a !important;
+}
+
+.navbar-search-field ::ng-deep .mat-mdc-form-field-label,
+.navbar-search-field ::ng-deep input::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Icons */
+.navbar-search-field ::ng-deep .mat-icon {
+    color: rgba(36, 27, 27, 0.8) !important;
+    font-size: 20px !important;
+}
+
+/* Centering the content */
+.navbar-search-field ::ng-deep .mat-mdc-form-field-infix {
+    padding: 12px 0 !important;
+    min-height: auto !important;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.search-container {
+    padding: 1rem 0;
+}
+
+.search-wrapper {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 14px 48px 14px 52px;
+    border: 2px solid #4e5970;
+    border-radius: 50px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    outline: none;
+    background: #ffffff;
+}
+
+.search-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-input::placeholder {
+    color: #313945;
+}
+
+/* Toolbar Container */
+.navbar-toolbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #251d1d;
+    /* Contrast with blue navbar */
+}
+
+/* Search bar compacte - Centered using absolute positioning */
+.search-compact {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    /* Wider and centered */
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.search-input-compact {
+    width: 100%;
+    padding: 10px 40px 10px 42px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    /* Glassmorphism */
+    color: rgb(45, 36, 36);
+}
+
+.search-input-compact:focus {
+    border-color: #241b1b;
+    background: rgba(175, 168, 168, 0.25);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.search-input-compact::placeholder {
+    color: rgba(31, 24, 24, 0.7);
+    font-size: 14px;
+}
+
+.clear-btn-compact {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.clear-btn-compact:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.clear-btn-compact mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: rgba(52, 44, 44, 0.8);
+}

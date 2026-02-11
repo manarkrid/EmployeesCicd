@@ -1,0 +1,39 @@
+<div class="details-container" *ngIf="employee">
+    <mat-card class="profile-card">
+        <div class="profile-header">
+            <img [src]="getAvatarUrl(employee)" alt="Profile Photo" class="profile-image">
+            <h2>{{ employee.firstName }} {{ employee.lastName }}</h2>
+            <p class="role">{{ employee.position }}</p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-content class="info-content">
+            <div class="info-item">
+                <mat-icon>email</mat-icon>
+                <span>{{ employee.email }}</span>
+            </div>
+            <div class="info-item" *ngIf="employee.gender">
+                <mat-icon>person</mat-icon>
+                <span>{{ employee.gender }}</span>
+            </div>
+            <div class="info-item">
+                <mat-icon>badge</mat-icon>
+                <span>ID: {{ employee.id }}</span>
+            </div>
+        </mat-card-content>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-actions align="end">
+            <button mat-button routerLink="/employees">Retour</button>
+            <button mat-raised-button color="primary" [routerLink]="['/employees/edit', employee.id]">
+                <mat-icon>edit</mat-icon> Modifier
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>
+
+<div *ngIf="!employee" class="loading-state">
+    <p>Chargement du profil...</p>
+</div>
