@@ -28,6 +28,16 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to employee management application." });
 });
 
+const register = require('prom-client').register;
+const collectDefaultMetrics = require('prom-client').collectDefaultMetrics;
+
+collectDefaultMetrics();
+
+app.get('/metrics', async (req, res) => {
+  res.setHeader('Content-Type', register.contentType);
+  res.send(await register.metrics());
+});
+
 require("./routes/employee.routes")(app);
 
 // set port, listen for requests

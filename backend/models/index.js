@@ -1,13 +1,21 @@
 const Sequelize = require("sequelize");
 require('dotenv').config();
 
+const DB_NAME = process.env.DB_NAME || "employee_db";
+const DB_USER = process.env.DB_USER || "user";
+const DB_PASSWORD = process.env.DB_PASSWORD || "password";
+const DB_HOST = process.env.DB_HOST || "db";
+const DB_DIALECT = process.env.DB_DIALECT || "mysql";
+
+console.log(`Initializing Sequelize with dialect: ${DB_DIALECT} on host: ${DB_HOST}`);
+
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
   {
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
+    host: DB_HOST,
+    dialect: DB_DIALECT,
     pool: {
       max: 5,
       min: 0,
