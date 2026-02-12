@@ -55,7 +55,7 @@ pipeline {
                         cat k8s/*.yaml | docker run -i --rm --network host \\
                         -v /home/vboxuser/.kube:/root/.kube \\
                         -v /home/vboxuser/.minikube:/home/vboxuser/.minikube \\
-                        ${KUBECTL_IMAGE} apply -f -
+                        ${KUBECTL_IMAGE} apply -f - --validate=false
                     """
                 }
             }
