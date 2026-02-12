@@ -2,12 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_USER = 'manar2'
-        DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
-        BACKEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_back"
-        FRONTEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_front"
-        KUBECTL_IMAGE = "bitnami/kubectl:1.29.6" // version stable et existante
-    }
+    DOCKER_HUB_USER = 'manar2'
+    DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
+    BACKEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_back"
+    FRONTEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_front"
+    KUBECTL_IMAGE = "bitnami/kubectl:1.29.6-debian-11" // <== version stable
+}
+
 
     stages {
         stage('Checkout') {
