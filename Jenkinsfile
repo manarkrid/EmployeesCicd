@@ -6,7 +6,7 @@ pipeline {
         DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
         BACKEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_back"
         FRONTEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_front"
-        KUBECTL_IMAGE = "bitnami/kubectl:1.29.6-debian-11-r0" // version fixe et stable
+        KUBECTL_IMAGE = "bitnami/kubectl:1.29.6" // version stable et existante
     }
 
     stages {
@@ -44,10 +44,10 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Met à jour les images dans les manifests Kubernetes
+                    // Mise à jour des images dans les manifests Kubernetes
                     sh "sed -i 's|IMAGE_BACKEND|${BACKEND_IMAGE}:${BUILD_NUMBER}|g' k8s/backend-manifests.yaml"
                     sh "sed -i 's|IMAGE_FRONTEND|${FRONTEND_IMAGE}:${BUILD_NUMBER}|g' k8s/frontend-manifests.yaml"
-                    
+
                     // Déploiement via kubectl dans un container stable
                     sh """
                         docker run --rm --network host \\
