@@ -6,7 +6,7 @@ pipeline {
     DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
     BACKEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_back"
     FRONTEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_front"
-    KUBECTL_IMAGE = "bitnami/kubectl:1.29.6-debian-11" // <== version stable
+    KUBECTL_IMAGE = "rancher/kubectl:v1.29.0" 
 }
 
 
