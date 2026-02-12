@@ -1,97 +1,85 @@
-# Projet Employees Management - Documentation CI/CD Complète
+# Projet Employees Management - Documentation CI/CD de bout en bout
 
-Ce document fournit les instructions précises pour reproduire l'environnement de développement et la chaîne de déploiement automatisée (CI/CD).
-
----
-
-## 🏗️ 1. Architecture du Système
-
-L'application suit une architecture microservices simplifiée :
-- **Frontend** : Framework Angular, servi via un serveur de développement ou Docker.
-- **Backend** : API REST Node.js/Express connectée à MySQL.
-- **Base de données** : Instance MySQL avec persistance des données via Kubernetes Volumes.
-- **CI/CD** : Pipeline orchestré par Jenkins, utilisant Docker Hub comme registre d'images.
+Ce dépôt contient une solution complète de gestion des employés avec une automatisation CI/CD, un déploiement Kubernetes et un monitoring avancé.
 
 ---
 
-## 🛠️ 2. Reproduction de l'Environnement de Développement
+## 🏗️ 1. Architecture du Projet
+L'architecture est basée sur une pile fullstack moderne :
+- **Frontend** : Angular (v18+)
+- **Backend** : Node.js (Express) & Sequelize
+- **Base de données** : MySQL
+- **Orchestration** : Kubernetes (Minikube)
 
-### A. Prérequis
-- **Docker Engine** (version 20.10+)
-- **Docker Compose**
-- **Node.js** (v18+) & **Angular CLI** (optionnel, pour dev sans Docker)
+---
 
-### B. Lancement via Docker Compose
-Cette méthode reproduit l'environnement complet (App + DB) localement :
+## � 2. Dockerisation de l'Application
+Chaque composant possède son propre `Dockerfile` optimisé :
+
+- **Backend** : Construit une image Node.js légère, installe les dépendances et expose le port `8080`.
+- **Frontend** : Utilise une construction multi-étapes (Multistage build) :
+  1. Build de l'application Angular via Node.js.
+  2. Service des fichiers statiques via Nginx sur le port `80`.
+
+**Vérification locale** :
+`docker-compose up --build` permet de valider que les conteneurs sont pleinement fonctionnels.
+
+---
+
+## ⚙️ 3. Pipeline Jenkins (CI/CD)
+Le fichier `Jenkinsfile` à la racine orchestre la chaîne de livraison :
+
+1.  **Checkout** : Récupère le code source depuis GitHub.
+2.  **Build Docker Images** : Construit les images avec un tag basé sur le numéro de build `${BUILD_NUMBER}`.
+3.  **Push to Docker Hub** : Publie les images sur le dépôt `manar2/employeemanagment_*`.
+4.  **Déploiement GitOps** : 
+    - Met à jour les manifests Kubernetes avec les nouveaux tags d'images (`sed`).
+    - Applique les changements sur le cluster via un conteneur `kubectl`.
+
+---
+
+## ☸️ 4. Kubernetes (K8s)
+Le déploiement est géré via les manifests dans `/k8s` :
+
+- **Deployments** : Gèrent les répliques pour `frontend`, `backend` et `mysql`.
+- **Services** : 
+  - `frontend` : Exposé via un **LoadBalancer** (ou NodePort sur Minikube).
+  - `backend` : Service interne accessible uniquement par le frontend.
+  - `db` : Service interne pour MySQL.
+- **Outil utilisé** : `kubectl apply -f k8s/`.
+
+---
+
+## 📊 5. Monitoring (Prometheus + Grafana)
+Le monitoring est mis en place via la stack **kube-prometheus-stack** (Helm).
+
+### A. Installation par ligne de commande (CMD)
 ```bash
-# À la racine du projet
-docker-compose up --build -d
-```
-- **Frontend** : [http://localhost:4200](http://localhost:4200)
-- **Backend API** : [http://localhost:8080](http://localhost:8080)
-- **Logs** : `docker-compose logs -f`
+# Ajouter le repo Helm
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
 
----
-
-## ⚙️ 3. Mise en Place de la Chaîne CI/CD (Jenkins)
-
-Pour reproduire la chaîne automatisée, suivez ces étapes détaillées :
-
-### A. Configuration de Jenkins
-1. **Plugins requis** :
-   - `Pipeline`
-   - `Git`
-   - `Credentials Binding Plugin` (pour Docker Hub)
-   - `Docker Pipeline`
-
-2. **Identifiants (Credentials)** :
-   - Allez dans **Manage Jenkins** > **Credentials**.
-   - Ajoutez un identifiant de type **Username with password**.
-   - **Username** : Votre compte Docker Hub (`manar2`).
-   - **Password** : Votre Token ou Mot de passe Docker Hub.
-   - **ID** : `docker-hub-credentials` (doit correspondre au Jenkinsfile).
-
-### B. Configuration de l'accès Kubernetes
-Le pipeline utilise `kubectl` via Docker pour déployer sur le cluster.
-- Assurez-vous que le service Jenkins a les permissions de lecture sur `/home/vboxuser/.kube/config`.
-- Le Jenkinsfile monte ces volumes pour l'accès local :
-  - `-v /home/vboxuser/.kube:/root/.kube:ro`
-  - `-v /home/vboxuser/.minikube:/home/vboxuser/.minikube:ro`
-
-### C. Création du Job
-1. Nouveau item > **Pipeline**.
-2. Dans la section **Pipeline**, choisissez **Pipeline script from SCM**.
-3. **SCM** : Git.
-4. **Repository URL** : L'URL de votre projet.
-5. **Script Path** : `Jenkinsfile`.
-
----
-
-## 🚢 4. Déploiement et Vérification (Kubernetes)
-
-Après l'exécution du pipeline, vérifiez le bon fonctionnement sur le cluster :
-
-### Vérification des ressources
-```bash
-# Vérifier que tous les pods sont "Running"
-kubectl get pods
-
-# Vérifier que les services sont exposés
-kubectl get svc
+# Installer la stack
+helm install monitoring prometheus-community/kube-prometheus-stack \
+  --namespace monitoring --create-namespace
 ```
 
-### Accès à l'application (Minikube)
-```bash
-# Récupérer l'URL du frontend
-minikube service frontend --url
-```
+### B. Accès via Navigateur (GUI)
+1. **Port-forward** : `kubectl port-forward -n monitoring svc/monitoring-grafana 3000:80`
+2. **Ouverture** : Accédez à [http://localhost:3000](http://localhost:3000).
+3. **Login** : `admin` / `prom-operator`.
+
+### C. Exigences réalisées
+- **Collecte** : Prometheus collecte automatiquement les métriques des nodes et pods du cluster.
+- **Dashboards** : Importez des dashboards standards (ex: ID `1860` pour Node Exporter) pour visualiser l'état du cluster.
+- **Métriques applicatives** : Surveillance de la latence HTTP et du taux d'erreur via les métriques exposées.
+- **Alerting** (Bonus) : Alertmanager est configuré pour notifier en cas de pod en échec.
 
 ---
 
-## 📝 5. Résumé des Fichiers Clés
-- **`Jenkinsfile`** : Définit les stages (Checkout, Build, Push, Deploy).
-- **`k8s/`** : Contient les manifests YAML (backend, frontend, mysql).
-- **`docker-compose.yml`** : Orchestration simple pour le développement local.
-- **`frontend/.editorconfig`** : Règles de formatage de code pour l'équipe.
+## 📝 Résumé des commandes utiles
+- `minikube service frontend` : Accéder à l'application.
+- `kubectl get all -n monitoring` : Vérifier l'état du monitoring.
+- `git commit -m "docs: finalized readme covering all 5 steps"` : Enregistrer les changements.
 
 
