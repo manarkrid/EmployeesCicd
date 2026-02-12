@@ -54,7 +54,7 @@ pipeline {
                         -v /home/vboxuser/.kube:/root/.kube \\
                         -v /home/vboxuser/.minikube:/home/vboxuser/.minikube \\
                         -v \$(pwd):/work -w /work \\
-                        bitnami/kubectl:1.29 apply -f k8s/
+                        bitnami/kubectl:latest apply -f k8s/
                     """
                 }
             }
