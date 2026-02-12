@@ -44,18 +44,27 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Mise à jour des images dans les manifests Kubernetes
+                    // 1. Mise à jour des images dans les manifests
                     sh "sed -i 's|IMAGE_BACKEND|${BACKEND_IMAGE}:${BUILD_NUMBER}|g' k8s/backend-manifests.yaml"
                     sh "sed -i 's|IMAGE_FRONTEND|${FRONTEND_IMAGE}:${BUILD_NUMBER}|g' k8s/frontend-manifests.yaml"
 
-                    // Déploiement via kubectl en passant les manifests par un "pipe"
-                    // On ajoute '---' entre chaque fichier pour éviter les erreurs de fusion
+                    // 2. Fusionner les fichiers proprement et déployer via container en mode root
                     sh """
-                        for f in k8s/*.yaml; do cat \$f; echo ""; echo "---"; done | \\
-                        docker run -i --rm --network host \\
-                        -v /home/vboxuser/.kube:/root/.kube \\
-                        -v /home/vboxuser/.minikube:/home/vboxuser/.minikube \\
-                        bitnami/kubectl:latest apply -f - --validate=false
+                        # Création d'un fichier unique avec séparateurs
+                        echo "" > k8s_all.yaml
+                        for f in k8s/backend-manifests.yaml k8s/frontend-manifests.yaml k8s/mysql-manifests.yaml; do
+                            cat \$f >> k8s_all.yaml
+                            echo "" >> k8s_all.yaml
+                            echo "---" >> k8s_all.yaml
+                        done
+
+                        # Déploiement (--user 0:0 est essentiel pour lire les certificats du host)
+                        cat k8s_all.yaml | docker run -i --rm --network host \\
+                            --user 0:0 \\
+                            -v /home/vboxuser/.kube:/root/.kube:ro \\
+                            -v /home/vboxuser/.minikube:/home/vboxuser/.minikube:ro \\
+                            -e KUBECONFIG=/root/.kube/config \\
+                            bitnami/kubectl:latest apply -f - --validate=false
                     """
                 }
             }
