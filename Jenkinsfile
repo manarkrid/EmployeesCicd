@@ -49,13 +49,13 @@ pipeline {
                     sh "sed -i 's|IMAGE_BACKEND|${BACKEND_IMAGE}:${BUILD_NUMBER}|g' k8s/backend-manifests.yaml"
                     sh "sed -i 's|IMAGE_FRONTEND|${FRONTEND_IMAGE}:${BUILD_NUMBER}|g' k8s/frontend-manifests.yaml"
 
-                    // Déploiement via kubectl dans un container stable
+                    // Déploiement via kubectl en passant les manifests par un "pipe"
+                    // Cela évite les erreurs de montage de fichiers (mount)
                     sh """
-                        docker run --rm --network host \\
+                        cat k8s/*.yaml | docker run -i --rm --network host \\
                         -v /home/vboxuser/.kube:/root/.kube \\
                         -v /home/vboxuser/.minikube:/home/vboxuser/.minikube \\
-                        -v \$(pwd):/work -w /work \\
-                        ${KUBECTL_IMAGE} apply -f k8s/
+                        ${KUBECTL_IMAGE} apply -f -
                     """
                 }
             }
