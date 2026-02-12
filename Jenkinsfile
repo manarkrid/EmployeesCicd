@@ -47,9 +47,15 @@ pipeline {
                     sh "sed -i 's|IMAGE_BACKEND|${BACKEND_IMAGE}:${BUILD_NUMBER}|g' k8s/backend-manifests.yaml"
                     sh "sed -i 's|IMAGE_FRONTEND|${FRONTEND_IMAGE}:${BUILD_NUMBER}|g' k8s/frontend-manifests.yaml"
                     
-                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                        sh "kubectl apply -f k8s/"
-                    }
+                    // Use the host's kubectl config by mounting it into a temporary container
+                    // This avoids the need for manual credentials in Jenkins
+                    sh """
+                        docker run --rm --network host \\
+                        -v /home/vboxuser/.kube:/root/.kube \\
+                        -v /home/vboxuser/.minikube:/home/vboxuser/.minikube \\
+                        -v \$(pwd):/work -w /work \\
+                        bitnami/kubectl:1.29 apply -f k8s/
+                    """
                 }
             }
         }
