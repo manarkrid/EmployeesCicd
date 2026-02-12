@@ -6,7 +6,6 @@ pipeline {
     DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
     BACKEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_back"
     FRONTEND_IMAGE = "${DOCKER_HUB_USER}/employeemanagment_front"
-    KUBECTL_IMAGE = "rancher/kubectl:v1.29.0" 
 }
 
 
@@ -50,12 +49,13 @@ pipeline {
                     sh "sed -i 's|IMAGE_FRONTEND|${FRONTEND_IMAGE}:${BUILD_NUMBER}|g' k8s/frontend-manifests.yaml"
 
                     // Déploiement via kubectl en passant les manifests par un "pipe"
-                    // Cela évite les erreurs de montage de fichiers (mount)
+                    // On ajoute '---' entre chaque fichier pour éviter les erreurs de fusion
                     sh """
-                        cat k8s/*.yaml | docker run -i --rm --network host \\
+                        for f in k8s/*.yaml; do cat \$f; echo ""; echo "---"; done | \\
+                        docker run -i --rm --network host \\
                         -v /home/vboxuser/.kube:/root/.kube \\
                         -v /home/vboxuser/.minikube:/home/vboxuser/.minikube \\
-                        ${KUBECTL_IMAGE} apply -f - --validate=false
+                        bitnami/kubectl:latest apply -f - --validate=false
                     """
                 }
             }
