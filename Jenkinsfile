@@ -43,10 +43,13 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Update the image in the deployment manifests or use helm
+                    // Update the image in the deployment manifests
                     sh "sed -i 's|IMAGE_BACKEND|${BACKEND_IMAGE}:${BUILD_NUMBER}|g' k8s/backend-manifests.yaml"
                     sh "sed -i 's|IMAGE_FRONTEND|${FRONTEND_IMAGE}:${BUILD_NUMBER}|g' k8s/frontend-manifests.yaml"
-                    sh "kubectl apply -f k8s/ --validate=false"
+                    
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        sh "kubectl apply -f k8s/"
+                    }
                 }
             }
         }

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: IMAGE_BACKEND # To be replaced by Jenkins
+        image: IMAGE_BACKEND
         env:
         - name: DB_HOST
           value: db
