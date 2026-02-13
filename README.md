@@ -1,6 +1,6 @@
 # Projet Employees Management - Documentation CI/CD de bout en bout
 
-Ce dépôt contient une solution complète de gestion des employés avec une automatisation CI/CD, un déploiement Kubernetes et un monitoring avancé.
+Ce dépôt contient une solution de gestion des employés avec une automatisation CI/CD, un déploiement Kubernetes et un monitoring avancé.
 
 ---
 
@@ -77,9 +77,6 @@ helm install monitoring prometheus-community/kube-prometheus-stack \
 
 ---
 
-## 📝 Résumé des commandes utiles
-- `minikube service frontend` : Accéder à l'application.
-- `kubectl get all -n monitoring` : Vérifier l'état du monitoring.
-- `git commit -m "docs: finalized readme covering all 5 steps"` : Enregistrer les changements.
+
 
 
