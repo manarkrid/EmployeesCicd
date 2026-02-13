@@ -7,7 +7,7 @@ Ce dépôt contient une solution de gestion des employés avec une automatisatio
 ## 🏗️ 1. Architecture du Projet
 L'architecture est basée sur une pile fullstack moderne :
 - **Frontend** : Angular (v18+)
-- **Backend** : Node.js (Express) & Sequelize
+- **Backend** : Node.js (Express)
 - **Base de données** : MySQL
 - **Orchestration** : Kubernetes (Minikube)
 
