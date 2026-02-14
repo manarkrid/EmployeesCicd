@@ -5,13 +5,65 @@ Ce dépôt contient une solution de gestion des employés avec une automatisatio
 ---
 
 ## 🏗️ 1. Architecture du Projet
-L'architecture est basée sur une pile fullstack moderne :
-- **Frontend** : Angular (v18+)
-- **Backend** : Node.js (Express)
+
+L'architecture est basée sur une pile fullstack moderne et suit un modèle **3-Tier** conteneurisé :
+- **Frontend** : Angular (v18+) & Nginx
+- **Backend** : Node.js (Express) & Sequelize
 - **Base de données** : MySQL
 - **Orchestration** : Kubernetes (Minikube)
+- **CI/CD** : Jenkins & GitHub Actions
+
+### Schéma Conceptuel (Mermaid)
+
+L'application suit une architecture **3-Tier** conteneurisée et orchestrée.
+
+### Schéma Conceptuel (Mermaid)
+```mermaid
+graph TD
+    classDef infra fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef app fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef db fill:#bfb,stroke:#333,stroke-width:2px;
+
+    subgraph "Utilisateur"
+        User((Navigateur Web))
+    end
+
+    subgraph "CI/CD Pipeline"
+        Code[Code Source] --> Build{Build & Push}
+        Build --> DHub((Docker Hub))
+    end
+
+    subgraph "Cluster Kubernetes (Minikube)"
+        subgraph "Frontend Layer"
+            FE_Svc[Service Frontend]:::infra
+            FE_Svc --> FE_Pod[Pod: Angular + Nginx]:::app
+        end
+
+        subgraph "Backend Layer"
+            BE_Svc[Service Backend]:::infra
+            BE_Svc --> BE_Pod[Pod: Node.js / Express]:::app
+        end
+
+        subgraph "Data Layer"
+            DB_Svc[Service MySQL]:::infra
+            DB_Svc --> DB_Pod[Pod: MySQL]:::db
+            DB_Pod --- PV[(Persistent Volume)]
+        end
+    end
+
+    User <--> FE_Svc
+    FE_Pod -- API REST --> BE_Svc
+    BE_Svc <--> BE_Pod
+    BE_Pod -- Sequelize --> DB_Svc
+    DHub -. Pull Images .-> FE_Pod
+    DHub -. Pull Images .-> BE_Pod
+```
+
+### Visualisation Graphique
+![Architecture du Projet](./assets/architecture.png)
 
 ---
+
 
 ## � 2. Dockerisation de l'Application
 Chaque composant possède son propre `Dockerfile` optimisé :
@@ -38,7 +90,16 @@ Le fichier `Jenkinsfile` à la racine orchestre la chaîne de livraison :
 
 ---
 
-## ☸️ 4. Kubernetes (K8s)
+## 🚀 4. GitHub Actions (Alternative CD)
+Un workflow GitHub Actions est disponible dans `.github/workflows/cd.yml`.
+
+### Configuration requise :
+1. **Secrets GitHub** : Ajoutez `DOCKER_HUB_TOKEN` dans votre dépôt.
+2. **Self-hosted Runner** : Indispensable pour l'accès local à Minikube.
+
+---
+
+## ☸️ 5. Kubernetes (K8s)
 Le déploiement est géré via les manifests dans `/k8s` :
 
 - **Deployments** : Gèrent les répliques pour `frontend`, `backend` et `mysql`.
@@ -50,7 +111,7 @@ Le déploiement est géré via les manifests dans `/k8s` :
 
 ---
 
-## 📊 5. Monitoring (Prometheus + Grafana)
+## 📊 6. Monitoring (Prometheus + Grafana)
 Le monitoring est mis en place via la stack **kube-prometheus-stack** (Helm).
 
 ### A. Installation par ligne de commande (CMD)
