@@ -17,45 +17,6 @@ L'architecture est basée sur une pile fullstack moderne et suit un modèle **3-
 
 L'application suit une architecture **3-Tier** conteneurisée et orchestrée.
 
-### Schéma Conceptuel (Mermaid)
-```mermaid
-graph TD
-    classDef infra fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef app fill:#bbf,stroke:#333,stroke-width:2px;
-    classDef db fill:#bfb,stroke:#333,stroke-width:2px;
-    classDef cicd fill:#ffb,stroke:#333,stroke-width:2px;
-    subgraph "Utilisateur"
-        User((Navigateur Web))
-    end
-    subgraph "CI/CD Pipeline (GitHub/Jenkins)"
-        Code[Code Source] --> Build{Build & Push}
-        Build --> DHub((Docker Hub))
-    end
-    subgraph "Cluster Kubernetes (Minikube)"
-        subgraph "Frontend Layer"
-            FE_Svc[Service Frontend]:::infra
-            FE_Svc --> FE_Pod[Pod: Angular + Nginx]:::app
-        end
-        subgraph "Backend Layer"
-            BE_Svc[Service Backend]:::infra
-            BE_Svc --> BE_Pod[Pod: Node.js / Express]:::app
-        end
-        subgraph "Data Layer"
-            DB_Svc[Service MySQL]:::infra
-            DB_Svc --> DB_Pod[Pod: MySQL]:::db
-            DB_Pod --- PV[(Persistent Volume)]
-        end
-        subgraph "Monitoring"
-            Prom[(Prometheus)] --- Graf[Grafana Dashboards]
-        end
-    end
-    User <--> FE_Svc
-    FE_Pod -- API REST --> BE_Svc
-    BE_Pod -- Sequelize --> DB_Svc
-    DHub -. Pull Images .-> FE_Pod
-    DHub -. Pull Images .-> BE_Pod
-```
-
 ### Visualisation Graphique
 ![Architecture du Projet](./assets/preview.png)
 
