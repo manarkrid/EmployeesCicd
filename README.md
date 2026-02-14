@@ -92,7 +92,42 @@ helm install monitoring prometheus-community/kube-prometheus-stack \
 - **Collecte** : Prometheus collecte automatiquement les métriques des nodes et pods du cluster.
 - **Dashboards** : Importez des dashboards standards (ex: ID `1860` pour Node Exporter) pour visualiser l'état du cluster.
 - **Métriques applicatives** : Surveillance de la latence HTTP et du taux d'erreur via les métriques exposées.
-- **Alerting** : Alertmanager est configuré pour notifier via email en cas de pod en échec dépasse le 20 pods .
+- **Alerting** : 🔔 Alerte Prometheus / Grafana – Pods Running
+
+=> Une règle d’alerte a été mise en place dans Grafana afin de surveiller l’état des pods Kubernetes.
+
+📌 Règle configurée:
+count(kube_pod_status_phase{phase="Running"}) < 20
+
+🎯 Objectif:
+
+Cette alerte surveille le nombre total de pods en état Running dans le cluster Kubernetes.
+
+Elle se déclenche lorsque le nombre de pods en cours d’exécution devient inférieur à 20.
+
+⚙️ Fonctionnement:
+
+Grafana interroge Prometheus à intervalle régulier (ex: chaque minute).
+
+La métrique kube_pod_status_phase{phase="Running"} compte les pods actifs.
+
+Si le nombre de pods Running passe sous le seuil défini (20), l’alerte est déclenchée.
+
+Une notification email est envoyée aux utilisateurs configurés.
+
+🚨 Cas d’usage:
+
+Cette alerte permet de détecter :
+
+* La chute d’un ou plusieurs pods.
+
+* Un problème de déploiement.
+
+* Un crash d’application.
+
+* Un problème de ressources (CPU / mémoire).
+
+Elle garantit une surveillance proactive du cluster et améliore la disponibilité des services.
 
 ---
 
