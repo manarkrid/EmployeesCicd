@@ -1,0 +1,54 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+
+env:
+  DOCKER_HUB_USER: manar2
+  BACKEND_IMAGE: manar2/employeemanagment_back
+  FRONTEND_IMAGE: manar2/employeemanagment_front
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted 
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.BACKEND_IMAGE }}:${{ github.run_number }}
+            ${{ env.BACKEND_IMAGE }}:latest
+
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ env.FRONTEND_IMAGE }}:${{ github.run_number }}
+            ${{ env.FRONTEND_IMAGE }}:latest
+
+      - name: Update Kubernetes manifests
+        run: |
+          sed -i 's|IMAGE_BACKEND|${{ env.BACKEND_IMAGE }}:${{ github.run_number }}|g' k8s/backend-manifests.yaml
+          sed -i 's|IMAGE_FRONTEND|${{ env.FRONTEND_IMAGE }}:${{ github.run_number }}|g' k8s/frontend-manifests.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          # Ensure current user has access to kubectl/kubeconfig
+          kubectl apply -f k8s/mysql-manifests.yaml
+          kubectl apply -f k8s/backend-manifests.yaml
+          kubectl apply -f k8s/frontend-manifests.yaml
