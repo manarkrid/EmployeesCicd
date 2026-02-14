@@ -92,7 +92,7 @@ helm install monitoring prometheus-community/kube-prometheus-stack \
 - **Collecte** : Prometheus collecte automatiquement les métriques des nodes et pods du cluster.
 - **Dashboards** : Importez des dashboards standards (ex: ID `1860` pour Node Exporter) pour visualiser l'état du cluster.
 - **Métriques applicatives** : Surveillance de la latence HTTP et du taux d'erreur via les métriques exposées.
-- **Alerting** : 🔔 Alerte Prometheus / Grafana – Pods Running
+- **Alerting** : 🔔 Alerte Prometheus / Grafana – Pods Running : 
 
 => Une règle d’alerte a été mise en place dans Grafana afin de surveiller l’état des pods Kubernetes.
 
